@@ -38,7 +38,7 @@ const Navigation = () => {
                     <span className="hidden nav-item-name mt-[3rem]">CART</span>{" "}
                 </Link>
                 <Link to='/favorite' className="flex items-center transition-transform transform hover:translate-x-2">
-                    <FaHeart size={26} className="mr-2 mt-[3rem]" />
+                    <FaHeart size={26} className="mr-2 mt-[3rem] text-red-600" />
                     <span className="hidden nav-item-name mt-[3rem]">Favorite</span>{" "}
                 </Link>
             </div>
