@@ -1,12 +1,31 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { AiOutlineHome, AiOutlineShopping, AiOutlineShoppingCart, AiOutlineLogin, AiOutlineUserAdd } from "react-icons/ai";
 import { FaHeart } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { useLoginMutation } from "../../redux/api/usersApiSlice";
+import { logout } from "../../redux/features/auth/authSlice";
 import "./Navigation.css";
 
 const Navigation = () => {
+    const {userInfo} = useSelector(state => state.auth)
     const [dropdownOpen, setDropDownOpen] = useState(false);
     const [showSidebar, setShowSidebar] = useState(false);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const [logoutApiCall] = useLoginMutation();
+
+
+
+    const loginHandler = async () => {
+        try {
+            await logoutApiCall().unwrap();
+            dispatch(logout());
+            navigate('/login');
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
 
     const toggleDropdown = () => {
@@ -42,6 +61,19 @@ const Navigation = () => {
                     <span className="hidden nav-item-name mt-[3rem]">Favorite</span>{" "}
                 </Link>
             </div>
+
+            <div className="relative">
+                <button 
+                    onClick={toggleDropdown}
+                >
+                    {userInfo ? ( 
+                        <span className="text-teal-500">{userInfo.username}</span>
+                        ) : (
+                            <></>
+                    )}
+                </button>
+            </div>
+
             <ul>
                 <li>
                     <Link to='/login' className="flex items-center transition-transform transform hover:translate-x-2">
