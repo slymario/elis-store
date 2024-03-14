@@ -3,7 +3,7 @@ import { AiOutlineHome, AiOutlineShopping, AiOutlineShoppingCart, AiOutlineLogin
 import { FaHeart } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { useLoginMutation } from "../../redux/api/usersApiSlice";
+import { useLogoutMutation } from "../../redux/api/usersApiSlice";
 import { logout } from "../../redux/features/auth/authSlice";
 import "./Navigation.css";
 
@@ -13,11 +13,11 @@ const Navigation = () => {
     const [showSidebar, setShowSidebar] = useState(false);
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const [logoutApiCall] = useLoginMutation();
+    const [logoutApiCall] = useLogoutMutation();
 
 
 
-    const loginHandler = async () => {
+    const logoutHandler = async () => {
         try {
             await logoutApiCall().unwrap();
             dispatch(logout());
@@ -62,19 +62,69 @@ const Navigation = () => {
                 </Link>
             </div>
 
-            <div className="relative">
+            <div className="relative flex items-center">
                 <button 
                     onClick={toggleDropdown}
+                    className="flex items-center"
                 >
                     {userInfo ? ( 
                         <span className="text-teal-500">{userInfo.username}</span>
                         ) : (
                             <></>
                     )}
-                </button>
-            </div>
 
-            <ul>
+                    {userInfo && (
+                        <svg 
+                        xmlns="http://www.w3.org/2000/svg" 
+                        className={`h-4 w-4 ml-1 ${
+                            dropdownOpen ? "transform rotate-180" : "rotate-180"
+                        }`}
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="white"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d={dropdownOpen ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"}    
+                            />
+                        </svg>
+                    )}
+                </button>
+
+                {dropdownOpen && userInfo && (
+                    <ul className={`absolute right-0 mt-4 rounded-lg space-y-1  max-h-85 bg-gray-200 text-black ${!userInfo.isAdmin ? "-top-20" : "-top-80"}`}>
+                        {userInfo.isAdmin && (
+                            <>
+                                <li>
+                                    <Link to='/admin/dashboard' className="block px-4 py-2 rounded-lg hover:bg-gray-600 hover:text-white">Dashboard</Link>
+                                </li>
+                                <li>
+                                    <Link to='/admin/productlist' className="block px-4 py-2 rounded-lg  hover:bg-gray-600 hover:text-white">Products</Link>
+                                </li>
+                                <li>
+                                    <Link to='/admin/categorylist' className="block px-4 py-2 rounded-lg  hover:bg-gray-600 hover:text-white">Category</Link>
+                                </li>
+                                <li>
+                                    <Link to='/admin/userlist' className="block px-4 py-2 rounded-lg  hover:bg-gray-600 hover:text-white">Users</Link>
+                                </li>
+                                <li>
+                                    <Link to='/admin/orderlist' className="block px-4 py-2 rounded-lg  hover:bg-gray-600 hover:text-white">Orders</Link>
+                                </li>
+                            </>
+                        )}
+                        <li>
+                            <Link to='/profile' className="block px-4 py-2 rounded-lg  hover:bg-gray-600 hover:text-white">Profile</Link>
+                        </li>
+                        <li>
+                            <button onClick={logoutHandler} className="block w-full px-4 py-2 text-left rounded-lg  hover:bg-gray-600 hover:text-white">Logout</button>
+                        </li>
+                    </ul>
+                )}
+            </div>
+                {!userInfo && (
+                    <ul>
                 <li>
                     <Link to='/login' className="flex items-center transition-transform transform hover:translate-x-2">
                         <AiOutlineLogin size={26} className="mr-2 mt-[3rem]" />
@@ -88,6 +138,8 @@ const Navigation = () => {
                     </Link>
                 </li>
             </ul>
+                )}
+            
         </div>
     )
 }
