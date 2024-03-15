@@ -51,6 +51,7 @@ const Login = () => {
                             <input 
                                 type="email" 
                                 id="email" 
+                                placeholder="Enter your email address"
                                 className="mt-1 p-2 border rounded w-full bg-gray-300" 
                                 value={email}
                                 onChange={e => setEmail(e.target.value)}
@@ -61,6 +62,7 @@ const Login = () => {
                             <input 
                                 type="password" 
                                 id="password" 
+                                placeholder="Enter your password" 
                                 className="mt-1 p-2 border rounded w-full bg-gray-300" 
                                 value={password}
                                 onChange={e => setPassword(e.target.value)}
@@ -69,7 +71,7 @@ const Login = () => {
                         <button 
                             disabled={isLoading}
                             type="submit"
-                            className="bg-teal-500 hover:bg-teal-700 text-white px-4 py-2 rounded cursor-pointer my-[1rem]"
+                            className="bg-teal-500 hover:bg-teal-800 text-white px-4 py-2 rounded-md cursor-pointer my-[1rem]"
                         >
                             {isLoading ? "Signing In..." : "Sign In"}
                         </button>
@@ -78,9 +80,9 @@ const Login = () => {
                     </form>
 
                     <div className="mt-4">
-                        <p className="">
-                            New Customer? {" "}
-                            <Link to={redirect ? `/register?redirect=${redirect}` : '/register'} className="text-teal-600 hover:underline">Register Here</Link>
+                        <p className="text-red-600">
+                            New customer? {" "}
+                            <Link to={redirect ? `/register?redirect=${redirect}` : '/register'} className="text-teal-600 hover:underline">Register Here.</Link>
                         </p>
                     </div>
 
