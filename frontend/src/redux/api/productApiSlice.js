@@ -15,7 +15,7 @@ export const productApiSlice = apiSlice.injectEndpoints({
 
         getProductById: builder.query({
             query: (productId) => `${PRODUCT_URL}/${productId}`,
-            providesTags: (result, error, productId) = [
+            providesTags: (result, error, productId) => [
                 { type: "Product", id: productId },
             ],
         }),
@@ -96,5 +96,5 @@ export const {
     useCreateReviewMutation,
     useGetTopProductsQuery,
     useGetNewProductsQuery,
-    useUploadImageMutation
+    useUploadProductImageMutation
 } = productApiSlice;
