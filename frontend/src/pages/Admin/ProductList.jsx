@@ -163,6 +163,7 @@ const handleSubmit = async (e) => {
                                     className="p-4 mb-3 w-[30rem] border rounded-lg text-white bg-[#101011]"
                                     onChange={e => setCategory(e.target.value)}
                                 >
+                                    <option value="">No categories selected</option>
                                     {categories?.map ((c) => (
                                         <option key={c._id} value={c._id}>
                                             {c.name}
