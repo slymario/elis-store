@@ -4,6 +4,7 @@ import { useGetUsersQuery, useDeleteUserMutation, useUpdateUserMutation} from ".
 import {toast} from "react-toastify";
 import Loader from "../../components/Loader";
 import Message from "../../components/Message";
+import AdminMenu from "./AdminMenu";
 
 const UserList = () => {
     const {data: users, refetch, isLoading, error} = useGetUsersQuery();
@@ -65,7 +66,7 @@ const UserList = () => {
                         </Message>
                     ) : (
                         <div className="flex flex-col md:flex-row">
-                            {/* {ADMIN MENU} */}
+                            <AdminMenu />
                             <table className="w-full md:w-4/5 mx-auto">
                                 <thead>
                                     <tr>

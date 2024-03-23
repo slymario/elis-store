@@ -1,25 +1,42 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useCreateProductMutation, useUploadProductImageMutation } from "../../redux/api/productApiSlice";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useUpdateProductMutation, useDeleteProductMutation, useGetProductByIdQuery, useUploadProductImageMutation } from "../../redux/api/productApiSlice";
 import { useFetchCategoriesQuery } from "../../redux/api/categoryApiSlice";
 import {toast} from "react-toastify";
 import AdminMenu from "./AdminMenu";
 
-const ProductList = () => {
-    const [image, setImage] = useState('');
-    const [name, setName] = useState('');
-    const [description, setDescription] = useState('');
-    const [price, setPrice] = useState('');
-    const [category, setCategory] = useState('');
-    const [quantity, setQuantity] = useState('');
-    const [brand, setBrand] = useState('');
-    const [stock, setStock] = useState(0);
-    const [imageUrl, setImageUrl] = useState(null);
+const ProductUpdate = () => {
     const navigate = useNavigate();
+    const params = useParams();
+    const {data: productData, isSuccess} = useGetProductByIdQuery(params._id);
+    const [image, setImage] = useState(productData?.image || '');
+    const [name, setName] = useState(productData?.name || '');
+    const [description, setDescription] = useState(productData?.description || '');
+    const [price, setPrice] = useState(productData?.price || '');
+    const [category, setCategory] = useState(productData?.category || '');
+    const [quantity, setQuantity] = useState(productData?.quantity || '');
+    const [brand, setBrand] = useState(productData?.brand || '');
+    const [stock, setStock] = useState(productData?.countInStock);
+
 
     const [uploadProductImage] = useUploadProductImageMutation();
-    const [createProduct] = useCreateProductMutation();
-    const {data: categories} = useFetchCategoriesQuery();
+    const [updateProduct] = useUpdateProductMutation();
+    const [deleteProduct] = useDeleteProductMutation();
+    const {data: categories = []} = useFetchCategoriesQuery();
+
+
+    useEffect(() => {
+        if (isSuccess && productData) {
+            setName(productData.name);
+            setDescription(productData.description);
+            setImage(productData.image);
+            setPrice(productData.price);
+            setCategory(productData.categories?._id);
+            setQuantity(productData.quantity);
+            setBrand(productData.brand);
+            setStock(productData.countInStock);
+        }
+    }, [isSuccess, productData]);
 
 
     const uploadFileHandler = async (e) => {
@@ -28,55 +45,84 @@ const ProductList = () => {
 
         try {
             const res = await uploadProductImage(formData).unwrap();
-            toast.success(res.message);
+            toast.success("Item added successfully");
             setImage(res.image);
-            setImageUrl(res.image);
         } catch (error) {
-            toast.error(error?.data?.message || error.error);
+            toast.error("Error uploading product image");
         }
     };
 
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+    
+        try {
+            const formData = new FormData();
+            formData.append('image', image);
+            formData.append('name', name);
+            formData.append('description', description);
+            formData.append('price', price);
+            formData.append('category', category);
+            formData.append('quantity', quantity);
+            formData.append('brand', brand);
+            formData.append('countInStock', stock);
 
-const handleSubmit = async (e) => {
-    e.preventDefault();
 
-    try {
-        const productData = new FormData();
-        productData.append('image', image);
-        productData.append('name', name);
-        productData.append('description', description);
-        productData.append('price', price);
-        productData.append('category', category);
-        productData.append('quantity', quantity);
-        productData.append('brand', brand);
-        productData.append('countInStock', stock);
-
-        const {data} = await createProduct(productData);
-
-        if (data.error) {
-            toast.error("Product upload failed");
-        } else {
-            toast.success(`${data.name} is created`);
-            navigate("/");
+            // Fetch existing reviews associated with the product
+        const existingReviews = productData.reviews.map(review => ({
+            name: review.user.username ? review.user.username : "Unknown", // Include existing review name
+            rating: review.rating,
+            comment: review.comment
+            // Include other review fields as needed
+        }));
+        
+        // Append existing reviews to formData
+        existingReviews.forEach((review, index) => {
+            Object.entries(review).forEach(([key, value]) => {
+                formData.append(`reviews.${index}.${key}`, value);
+            });
+        });
+    
+            const {data} = await updateProduct({productId: params._id, formData});
+    
+            if (data.error) {
+                toast.error(data.error);
+            } else {
+                toast.success("Product updated successfully");
+                navigate("/admin/allproductslist");
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("Product update failed");
         }
-    } catch (error) {
-        console.error(error);
-        toast.error("Product creation failed");
-    }
-}
+    };
 
+
+    const handleDelete = async () => {
+        try {
+            let answer = window.confirm('Are you sure you want to delete this product?');
+            if (!answer) return;
+
+            const {data} = await deleteProduct(params._id);
+            toast.success(`${data.name} is deleted successfully`)
+            navigate("/admin/allproductslist");
+        } catch (error) {
+            console.log(error);
+            toast.error("Product delete failed");
+        }
+    }
+    
 
     return (
         <div className="container xl:mx-[9rem] sm:mx-[0]">
             <div className="flex flex-col md:flex-row">
                 <AdminMenu />
                 <div className="md:w-3/4 p-3">
-                    <div className="h-12 font-bold text-center underline">CREATE PRODUCT</div>
+                    <div className="h-12 font-bold text-center underline">UPDATE PRODUCT</div>
 
-                    {imageUrl && (
+                    {image && (
                         <div className="text-center">
-                            <img src={imageUrl} alt="product" className="block mx-auto max-h-[200px]" />
+                            <img src={image} alt="product" className="block mx-auto max-h-[200px]" />
                         </div>
                     )}
 
@@ -172,9 +218,21 @@ const handleSubmit = async (e) => {
                             </div>
                         </div>
 
-                                <button onClick={handleSubmit} className="py-4 px-10 mt-5 rounded-lg text-lg text-black font-bold hover:text-white bg-teal-300 hover:bg-teal-800">
-                                    Create
+                            <div>
+                                <button 
+                                    onClick={handleSubmit} 
+                                    className="py-4 px-10 mt-5 rounded-lg text-lg text-black font-bold hover:text-white mr-6 bg-teal-500 hover:bg-teal-700"
+                                >
+                                    Update
                                 </button>
+
+                                <button 
+                                    onClick={handleDelete} 
+                                    className="py-4 px-10 mt-5 rounded-lg text-lg text-black font-bold hover:text-white bg-red-500 hover:bg-red-700"
+                                >
+                                    Delete
+                                </button>
+                            </div>
 
                     </div>
                 </div>
@@ -183,4 +241,4 @@ const handleSubmit = async (e) => {
     )
 }
 
-export default ProductList;
+export default ProductUpdate
