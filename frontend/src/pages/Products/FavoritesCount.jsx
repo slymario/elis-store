@@ -9,7 +9,7 @@ const FavoritesCount = () => {
     return (
         <div className="absolute left-2 top-8">
             {favoriteCount > 0 && (
-                <span className="px-1 py-0 text-sm text-white bg-teal-600 rounded-full">{favoriteCount}</span>
+                <span className="px-1 py-0 text-sm text-white bg-blue-600 rounded-full">{favoriteCount}</span>
             )}
         </div>
     )
