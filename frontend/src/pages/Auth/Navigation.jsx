@@ -6,9 +6,10 @@ import { useSelector, useDispatch } from "react-redux";
 import { useLogoutMutation } from "../../redux/api/usersApiSlice";
 import { logout } from "../../redux/features/auth/authSlice";
 import "./Navigation.css";
+import FavoritesCount from "../Products/FavoritesCount";
 
 const Navigation = () => {
-    const {userInfo} = useSelector(state => state.auth)
+    const {userInfo} = useSelector((state) => state.auth)
     const [dropdownOpen, setDropDownOpen] = useState(false);
     const [showSidebar, setShowSidebar] = useState(false);
     const dispatch = useDispatch();
@@ -52,13 +53,18 @@ const Navigation = () => {
                     <AiOutlineShopping size={26} className="mr-2 mt-[3rem]" />
                     <span className="hidden nav-item-name mt-[3rem]">SHOP</span>{" "}
                 </Link>
-                <Link to='/cart' className="flex items-center transition-transform transform hover:translate-x-2">
-                    <AiOutlineShoppingCart size={26} className="mr-2 mt-[3rem]" />
-                    <span className="hidden nav-item-name mt-[3rem]">CART</span>{" "}
+                <Link to='/cart' className="flex relative">
+                    <div className="flex items-center transition-transform transform hover:translate-x-2">
+                        <AiOutlineShoppingCart size={26} className="mr-2 mt-[3rem]" />
+                        <span className="hidden nav-item-name mt-[3rem]">CART</span>{" "}
+                    </div>
                 </Link>
-                <Link to='/favorite' className="flex items-center transition-transform transform hover:translate-x-2">
-                    <FaHeart size={26} className="mr-2 mt-[3rem] text-red-600" />
-                    <span className="hidden nav-item-name mt-[3rem]">Favorite</span>{" "}
+                <Link to='/favorite' className="flex relative">
+                    <div className="flex items-center transition-transform transform hover:translate-x-2">
+                        <FaHeart size={26} className="mr-2 mt-[3rem] text-red-600" />
+                        <span className="hidden nav-item-name mt-[3rem]">Favorite</span>{" "}
+                        <FavoritesCount />
+                    </div>
                 </Link>
             </div>
 
@@ -144,4 +150,4 @@ const Navigation = () => {
     )
 }
 
-export default Navigation
+export default Navigation;
