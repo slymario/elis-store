@@ -4,6 +4,8 @@ import { useUpdateProductMutation, useDeleteProductMutation, useGetProductByIdQu
 import { useFetchCategoriesQuery } from "../../redux/api/categoryApiSlice";
 import {toast} from "react-toastify";
 import AdminMenu from "./AdminMenu";
+import { useSelector } from "react-redux"; // Import useSelector to access state from redux store
+
 
 const ProductUpdate = () => {
     const navigate = useNavigate();
@@ -23,6 +25,9 @@ const ProductUpdate = () => {
     const [updateProduct] = useUpdateProductMutation();
     const [deleteProduct] = useDeleteProductMutation();
     const {data: categories = []} = useFetchCategoriesQuery();
+
+    // Accessing userInfo from Redux store
+    const userInfo = useSelector((state) => state.auth.userInfo);
 
 
     useEffect(() => {
@@ -66,22 +71,18 @@ const ProductUpdate = () => {
             formData.append('quantity', quantity);
             formData.append('brand', brand);
             formData.append('countInStock', stock);
+            formData.append('userInfo', JSON.stringify(userInfo));
 
-
-            // Fetch existing reviews associated with the product
-        const existingReviews = productData.reviews.map(review => ({
-            name: review.user.username ? review.user.username : "Unknown", // Include existing review name
-            rating: review.rating,
-            comment: review.comment
-            // Include other review fields as needed
-        }));
-        
-        // Append existing reviews to formData
-        existingReviews.forEach((review, index) => {
-            Object.entries(review).forEach(([key, value]) => {
-                formData.append(`reviews.${index}.${key}`, value);
-            });
-        });
+        // const existingReviews = productData.reviews.map(review => ({
+        //     name: review.user.username ? review.user.username : "Unknown",
+        //     rating: review.rating,
+        //     comment: review.comment
+        // }));
+        // existingReviews.forEach((review, index) => {
+        //     Object.entries(review).forEach(([key, value]) => {
+        //         formData.append(`reviews.${index}.${key}`, value);
+        //     });
+        // });
     
             const {data} = await updateProduct({productId: params._id, formData});
     
