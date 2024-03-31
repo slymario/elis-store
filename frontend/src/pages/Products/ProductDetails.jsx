@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { Link, useParams, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 import {toast} from "react-toastify";
 import { useGetProductDetailsQuery, useCreateReviewMutation } from "../../redux/api/productApiSlice";
 import Loader from "../../components/Loader";
@@ -10,6 +10,7 @@ import moment from "moment";
 import HeartIcon from "./HeartIcon";
 import Ratings from "./Ratings";
 import ProductTabs from "./ProductTabs";
+import { addToCart } from "../../redux/features/cart/cartSlice";
 
 
 
@@ -23,6 +24,9 @@ const ProductDetails = () => {
     const {userInfo} = useSelector((state) => state.auth);
     const [createReview, {isLoading: loadingProductReview}] = useCreateReviewMutation();
 
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
 
 
     const submitHandler = async (e) => {
@@ -35,6 +39,13 @@ const ProductDetails = () => {
         } catch (error) {
             toast.error(error?.data || error.message)
         }
+    };
+
+
+    const addToCartHandler = () => {
+        dispatch(addToCart({...product, qty}))
+        toast.success("Item added successfuly")
+        navigate('/cart');
     };
 
 
@@ -113,7 +124,7 @@ const ProductDetails = () => {
 
                             <div className="btn-container">
                                 <button
-                                    // onClick={addToCartHandler}
+                                    onClick={addToCartHandler}
                                     disabled={product.countInStock === 0}
                                     className="bg-teal-600 text-white py-2 px-4 rounded-lg mt-4 md:mt-0"
                                 >
