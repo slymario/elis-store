@@ -35,7 +35,12 @@ const ProductCarousel = () => {
                             <div className="flex justify-between w-[20rem] mt-4">
                                 <div className="one">
                                     <h2 className="font-bold underline">{name}</h2> <br />
-                                    <p className="text-teal-400 font-bold">NGN {price}</p> <br /> 
+                                    <p className="text-teal-400 font-bold">
+                                    {price?.toLocaleString('en-NG', {
+                                        style: "currency",
+                                        currency: "NGN",
+                                    })}
+                                        </p> <br /> 
                                     <p className="w-[25rem] italic text-gray-300 ">{description.substring(0, 170)}...</p>
                                 </div>
 

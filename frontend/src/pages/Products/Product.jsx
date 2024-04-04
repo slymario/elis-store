@@ -14,7 +14,10 @@ const Product = ({product}) => {
                 <Link to={`/product/${product._id}`}>
                 <h2 className="flex justify-between items-center">
                     <div className="text-lg">{product.name}</div>
-                    <span className="bg-teal-100 text-teal-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-pink-900 dark:text-pink-300">NGN {product.price}</span>
+                    <span className="bg-teal-100 text-teal-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-full dark:bg-pink-900 dark:text-pink-300">{product?.price?.toLocaleString('en-NG', {
+                            style: "currency",
+                            currency: "NGN",
+                        })}</span>
                 </h2>
                 </Link>
             </div>

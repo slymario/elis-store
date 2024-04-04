@@ -43,7 +43,12 @@ const Cart = () => {
                                     <div className="flex-1 ml-4">
                                         <Link to={`/product/${item._id}`} className="text-teal-500">{item.name}</Link>
                                         <div className="mt-2 text-white">{" "}{item.brand}</div>
-                                        <div className="mt-2 text-white font-bold">NGN:{" "}{item.price}</div>
+                                        <div className="mt-2 text-white font-bold">
+                                            {item?.price?.toLocaleString('en-NG', {
+                                                style: "currency",
+                                                currency: "NGN",
+                                            })}
+                                        </div>
                                     </div>
                                     <div className="w-24">
                                         <select
@@ -71,11 +76,11 @@ const Cart = () => {
 
                                 <div className="mt-8 w-[40rem]">
                                     <div className="p-4 rounded-lg">
-                                        <h2 className="text-xl font-semibold mb-2 text-indigo-600">
-                                            Items ({cartItems.reduce((acc, item) => acc + item.qty, 0)})
+                                        <h2 className="text-xl font-semibold mb-2">
+                                            Total Items.... ({cartItems.reduce((acc, item) => acc + item.qty, 0)})
                                         </h2>
-                                        <div className="text-2xl font-bold">
-                                            NGN {cartItems.reduce((acc, item) => acc + item.qty * item.price, 0).toFixed(2)}
+                                        <div className="text-2xl font-bold text-green-400">
+                                            ₦{cartItems.reduce((acc, item) => acc + item.qty * item.price, 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                                         </div>
                                         <button 
                                             className="bg-blue-500 hover:bg-blue-800 mt-6 py-2 px-4 rounded-full text-lg w-full"

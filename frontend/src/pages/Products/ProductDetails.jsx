@@ -75,7 +75,12 @@ const ProductDetails = () => {
                         <div className="flex flex-col justify-between">
                             <h2 className="text-2xl font-semibold">{product.name}</h2>
                             <p className="my-4 xl:w-[30rem] lg:w-[25rem] md:w-[20rem] text-[#B0B0B0]">{product.description}</p>
-                            <p className="text-5xl my-4 font-extrabold">NGN {product.price}</p>
+                            <p className="text-5xl my-4 font-extrabold">
+                                {product?.price?.toLocaleString('en-NG', {
+                                    style: "currency",
+                                    currency: "NGN",
+                                })}
+                            </p>
 
                             <div className="flex items-center justify-between w-[20rem]">
                                 <div className="one">
