@@ -29,6 +29,10 @@ app.use("/api/products", productsRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/orders", orderRoutes);
 
+app.get("/api/config/paystack", (req, res) => {
+    res.send({clientId: process.env.PAYSTACK_SECRET_KEY});
+})
+
 const __dirname = path.resolve();
 app.use("/uploads", express.static(path.join(__dirname + "/uploads")));
 
